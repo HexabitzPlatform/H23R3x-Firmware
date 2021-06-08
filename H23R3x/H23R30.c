@@ -244,6 +244,7 @@ void Module_Init(void)
 
 	/* FT234XD/BT900 UART */
   MX_USART3_UART_Init();
+  UpdateBaudrate(6, 115200);
 
 }
 
