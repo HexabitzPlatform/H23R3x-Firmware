@@ -37,7 +37,7 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>H23Rx</name>
+			<name>H23R3x</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -152,74 +152,74 @@
 			<locationURI>PARENT-1-PROJECT_LOC/BOS/README.md</locationURI>
 		</link>
 		<link>
-			<name>H23Rx/H23R3.h</name>
+			<name>H23R3x/H23R3.h</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/H23Rx/H23R3.h</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/H23R3x/H23R3.h</locationURI>
 		</link>
 		<link>
-			<name>H23Rx/H23R30.c</name>
+			<name>H23R3x/H23R30.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/H23Rx/H23R30.c</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/H23R3x/H23R30.c</locationURI>
 		</link>
 		<link>
-			<name>H23Rx/H23R3_MemoryMap.h</name>
+			<name>H23R3x/H23R3_MemoryMap.h</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/H23Rx/H23R3_MemoryMap.h</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/H23R3x/H23R3_MemoryMap.h</locationURI>
 		</link>
 		<link>
-			<name>H23Rx/H23R3_dma.c</name>
+			<name>H23R3x/H23R3_dma.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/H23Rx/H23R3_dma.c</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/H23R3x/H23R3_dma.c</locationURI>
 		</link>
 		<link>
-			<name>H23Rx/H23R3_dma.h</name>
+			<name>H23R3x/H23R3_dma.h</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/H23Rx/H23R3_dma.h</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/H23R3x/H23R3_dma.h</locationURI>
 		</link>
 		<link>
-			<name>H23Rx/H23R3_gpio.c</name>
+			<name>H23R3x/H23R3_gpio.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/H23Rx/H23R3_gpio.c</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/H23R3x/H23R3_gpio.c</locationURI>
 		</link>
 		<link>
-			<name>H23Rx/H23R3_gpio.h</name>
+			<name>H23R3x/H23R3_gpio.h</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/H23Rx/H23R3_gpio.h</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/H23R3x/H23R3_gpio.h</locationURI>
 		</link>
 		<link>
-			<name>H23Rx/H23R3_it.c</name>
+			<name>H23R3x/H23R3_it.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/H23Rx/H23R3_it.c</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/H23R3x/H23R3_it.c</locationURI>
 		</link>
 		<link>
-			<name>H23Rx/H23R3_rtc.c</name>
+			<name>H23R3x/H23R3_rtc.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/H23Rx/H23R3_rtc.c</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/H23R3x/H23R3_rtc.c</locationURI>
 		</link>
 		<link>
-			<name>H23Rx/H23R3_timers.c</name>
+			<name>H23R3x/H23R3_timers.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/H23Rx/H23R3_timers.c</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/H23R3x/H23R3_timers.c</locationURI>
 		</link>
 		<link>
-			<name>H23Rx/H23R3_uart.c</name>
+			<name>H23R3x/H23R3_uart.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/H23Rx/H23R3_uart.c</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/H23R3x/H23R3_uart.c</locationURI>
 		</link>
 		<link>
-			<name>H23Rx/H23R3_uart.h</name>
+			<name>H23R3x/H23R3_uart.h</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/H23Rx/H23R3_uart.h</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/H23R3x/H23R3_uart.h</locationURI>
 		</link>
 		<link>
-			<name>H23Rx/startup_stm32f091xc.s</name>
+			<name>H23R3x/startup_stm32f091xc.s</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/H23Rx/startup_stm32f091xc.s</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/H23R3x/startup_stm32f091xc.s</locationURI>
 		</link>
 		<link>
-			<name>H23Rx/stm32f0xx_hal_conf.h</name>
+			<name>H23R3x/stm32f0xx_hal_conf.h</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/H23Rx/stm32f0xx_hal_conf.h</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/H23R3x/stm32f0xx_hal_conf.h</locationURI>
 		</link>
 		<link>
 			<name>Thirdparty/.git</name>

@@ -15,7 +15,7 @@ RM := rm -rf
 -include Thirdparty/Middleware/FreeRTOS/Source/CMSIS_RTOS/subdir.mk
 -include Thirdparty/Middleware/FreeRTOS/Source/subdir.mk
 -include Thirdparty/CMSIS/Device/ST/STM32F0xx/Source/Templates/subdir.mk
--include H23Rx/subdir.mk
+-include H23R3x/subdir.mk
 -include BOS/subdir.mk
 -include subdir.mk
 -include objects.mk
