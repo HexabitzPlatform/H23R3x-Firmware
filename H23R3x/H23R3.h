@@ -1,12 +1,11 @@
 /*
-    BitzOS (BOS) V0.2.4 - Copyright (C) 2017-2021 Hexabitz
-    All rights reserved
+ BitzOS (BOS) V0.2.5 - Copyright (C) 2017-2021 Hexabitz
+ All rights reserved
 
-    File Name     : H23Rx.h
-    Description   : Header file for module H23R0/H23R1.
-										Bluetooth module (BT800/BT900)
-*/
-
+ File Name     : H23Rx.h
+ Description   : Header file for module H01R0.
+ 	 	 	 	 RGB LED (Cree CLVBA-FKA-CC1F1L1BB7R3R3)
+ */
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef H23R3_H
 #define H23R3_H

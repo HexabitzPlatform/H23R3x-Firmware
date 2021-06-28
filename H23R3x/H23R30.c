@@ -1,5 +1,5 @@
 /*
-    BitzOS (BOS) V0.2.4 - Copyright (C) 2017-2021 Hexabitz
+    BitzOS (BOS) V0.2.5 - Copyright (C) 2017-2021 Hexabitz
     All rights reserved
 
     File Name     : H23Rx.c
@@ -231,7 +231,7 @@ uint8_t ClearROtopology(void)
 
 /* --- H23R0 module initialization.
 */
-void Module_Init(void)
+void Module_Peripheral_Init(void)
 {
 
 
