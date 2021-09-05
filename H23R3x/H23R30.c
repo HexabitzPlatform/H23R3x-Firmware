@@ -2,27 +2,9 @@
     BitzOS (BOS) V0.2.5 - Copyright (C) 2017-2021 Hexabitz
     All rights reserved
 
-    File Name     : H23Rx.c
-    Description   : Source code for module H23R0/H23R1.
-				 	module (BT800/BT900)
-
-		Required MCU resources :
-
-			>> USARTs 1,2,4,5,6 for module ports.
-			>> USART 3 for FT234XD connected to BT800 USB / for BT900 UART.
-			>> PB15 for BT800/BT900 EN_RST.
-			>> PB2 for BT900 RST.
-			>> PA7 for BT900 BT_MODE.
-			>> PB14 for BT900 BT_VSP.
-			>> PB12 for BT900 Host_Wkup.
-
-		                                  | BT_MODE (nAutoRUN) |    BT_VSP (SIO_19 ) |
-		| Self-contained Run mode         |           0        |          1          |
-		| Interactive / development mode  |           1        |          1          |
-		| VSP Bridge-to-UART mode         |           1        |          0          |
-		| VSP Command mode                |           0        |          0          |
-		| Over the Air (OTA)              |           0        |          0          |
-
+    File Name     : H23R3.c
+    Description   : Source code for module H23R3.
+    				module (BlueNRG-M2)
 */
 
 /* Includes ------------------------------------------------------------------*/
@@ -242,7 +224,7 @@ void Module_Peripheral_Init(void)
   MX_USART5_UART_Init();
   MX_USART6_UART_Init();
 
-	/* FT234XD/BT900 UART */
+	/* BlueNRG-M2 UART */
   MX_USART3_UART_Init();
   UpdateBaudrate(6, 115200);
 
@@ -268,11 +250,6 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 	return result;
 }
 
-/*-----------------------------------------------------------*/
-void ExecuteMonitor(void){
-
-
-}
 /* --- Register this module CLI Commands
 */
 void RegisterModuleCLICommands(void)

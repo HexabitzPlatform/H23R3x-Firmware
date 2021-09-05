@@ -2,7 +2,7 @@
  BitzOS (BOS) V0.2.5 - Copyright (C) 2017-2021 Hexabitz
  All rights reserved
 
- File Name     : H23R0_it.c
+ File Name     : H23R3_it.c
  Description   :Interrupt Service Routines.
 
  */
@@ -215,7 +215,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	if (portStatus[GetPort(huart)] == FREE || portStatus[GetPort(huart)] == MSG)
 	{
 		// Circular buffer is full. Set a global persistant flag via BOS events and a temporary flag via portStatus.
-		BOS.overrun = GetPort(huart);
+		BOSMessaging.overrun = GetPort(huart);
 		portStatus[GetPort(huart)] = OVERRUN;
 		// Reset the circular RX buffer index
 		UARTRxBufIndex[GetPort(huart)-1] = 0;

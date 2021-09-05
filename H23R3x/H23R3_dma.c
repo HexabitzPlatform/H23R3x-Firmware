@@ -2,7 +2,7 @@
  BitzOS (BOS) V0.2.5 - Copyright (C) 2017-2021 Hexabitz
  All rights reserved
 
- File Name     : H23R0_dma.c
+ File Name     : H23R3_dma.c
  Description   : source file Contains Peripheral DMA setup .
 
  */

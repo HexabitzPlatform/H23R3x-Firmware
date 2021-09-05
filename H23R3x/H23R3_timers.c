@@ -2,7 +2,7 @@
  BitzOS (BOS) V0.2.5 - Copyright (C) 2017-2021 Hexabitz
  All rights reserved
 
- File Name     : H23Rx_timers.c
+ File Name     : H23R3_timers.c
  Description   : Peripheral timers setup source file.
 
  Required MCU resources :

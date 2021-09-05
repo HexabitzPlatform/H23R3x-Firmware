@@ -2,7 +2,7 @@
  BitzOS (BOS) V0.2.5 - Copyright (C) 2017-2021 Hexabitz
  All rights reserved
 
- File Name     : H23Rx_gpio.c
+ File Name     : H23R3_gpio.c
  Description   : Source code provides code for the configuration of all used GPIO pins .
 
  */

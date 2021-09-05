@@ -2,7 +2,7 @@
  BitzOS (BOS) V0.2.5 - Copyright (C) 2017-2021 Hexabitz
  All rights reserved
 
- File Name     : H23Rx_uart.c
+ File Name     : H23R3_uart.c
  Description   : Source Code provides configuration for USART instances.
 
  */

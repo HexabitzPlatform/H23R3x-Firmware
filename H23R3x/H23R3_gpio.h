@@ -2,7 +2,7 @@
  BitzOS (BOS) V0.2.5 - Copyright (C) 2017-2021 Hexabitz
  All rights reserved
 
- File Name     : H23Rx_gpio.h
+ File Name     : H23R3_gpio.h
  Description   : Header file contains all the functions prototypes for
  the GPIO .
 

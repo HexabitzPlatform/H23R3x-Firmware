@@ -3,8 +3,8 @@
  All rights reserved
 
  File Name     : H23Rx.h
- Description   : Header file for module H01R0.
- 	 	 	 	 RGB LED (Cree CLVBA-FKA-CC1F1L1BB7R3R3)
+ Description   : Header files for module H23R3.
+    			 module (BlueNRG-M2
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef H23R3_H
