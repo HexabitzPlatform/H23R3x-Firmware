@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.2.6 - Copyright (C) 2017-2022 Hexabitz
+ BitzOS (BOS) V0.2.5 - Copyright (C) 2017-2021 Hexabitz
  All rights reserved
 
  File Name     : H23R3_dma.c
@@ -9,7 +9,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "BOS.h"
-
 
 
 /*----------------------------------------------------------------------------*/
@@ -202,7 +201,12 @@ void DMA_MSG_RX_Setup(UART_HandleTypeDef *huart, DMA_HandleTypeDef *hDMA)
 	SetupDMAInterrupts(hDMA, MSG_DMA_INT_PRIORITY);
 	
 	/* Start DMA stream	*/	
-	HAL_UART_Receive_DMA(huart, (uint8_t *)&UARTRxBuf[GetPort(huart)-1], MSG_RX_BUF_SIZE);			
+	if(huart != &huart3)
+	HAL_UART_Receive_DMA(huart, (uint8_t *)&UARTRxBuf[GetPort(huart)-1], MSG_RX_BUF_SIZE);
+
+	else
+	HAL_UART_Receive_DMA(huart, (uint8_t *)&BT_Rx, 1);
+
 }
 
 /*-----------------------------------------------------------*/

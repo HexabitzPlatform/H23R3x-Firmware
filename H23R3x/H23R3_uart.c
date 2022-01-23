@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.2.6 - Copyright (C) 2017-2022 Hexabitz
+ BitzOS (BOS) V0.2.5 - Copyright (C) 2017-2021 Hexabitz
  All rights reserved
 
  File Name     : H23R3_uart.c
@@ -72,7 +72,8 @@ void MX_USART2_UART_Init(void)
 void MX_USART3_UART_Init(void)
 {
   huart3.Instance = USART3;
-  huart3.Init.BaudRate = DEF_ARRAY_BAUDRATE;
+  //huart3.Init.BaudRate = DEF_ARRAY_BAUDRATE;
+  huart3.Init.BaudRate = 115200; //Test Line
   huart3.Init.WordLength = UART_WORDLENGTH_8B;
   huart3.Init.StopBits = UART_STOPBITS_1;
   huart3.Init.Parity = UART_PARITY_NONE;
@@ -95,7 +96,8 @@ void MX_USART3_UART_Init(void)
 void MX_USART4_UART_Init(void)
 {
   huart4.Instance = USART4;
-  huart4.Init.BaudRate = DEF_ARRAY_BAUDRATE;
+  //huart4.Init.BaudRate = DEF_ARRAY_BAUDRATE;
+  huart4.Init.BaudRate = 115200; //Test Line
   huart4.Init.WordLength = UART_WORDLENGTH_8B;
   huart4.Init.StopBits = UART_STOPBITS_1;
   huart4.Init.Parity = UART_PARITY_NONE;
