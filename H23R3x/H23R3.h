@@ -16,7 +16,8 @@
 #include "H23R3_uart.h"
 #include "H23R3_gpio.h"
 #include "H23R3_dma.h"
-
+#include "H23R3_inputs.h"
+#include "H23R3_eeprom.h"
 /* Exported definitions -------------------------------------------------------*/
 
 #ifdef H23R3
@@ -212,7 +213,8 @@ extern Module_Status BT_Clear_User_Buffer(void);
 extern void BT_RESET_MODULE(void);
 extern void BT_Disconnect(void);
 extern Module_Status BT_Stream_To_Port(uint8_t port_number);
-
+void SetupPortForRemoteBootloaderUpdate(uint8_t port);
+void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);
 
 
 
