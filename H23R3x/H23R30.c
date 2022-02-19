@@ -9,7 +9,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "BOS.h"
-
+#include "H23R3_inputs.h"
 
 /* Define UART variables */
 UART_HandleTypeDef huart1;
@@ -28,13 +28,220 @@ module_param_t modParam[NUM_MODULE_PARAMS] = {{.paramPtr=NULL, .paramFormat=FMT_
 extern FLASH_ProcessTypeDef pFlash;
 extern uint8_t numOfRecordedSnippets;
 
+//BLUENRG-2 Private Variables and Data structures:
+uint8_t BT_User_Buffer_Length = 192;
+
+
+uint8_t BT_Devices_Name[BT_Max_Number_Of_Devices][BT_Max_Device_Name_Length] = {0};
+uint8_t BT_Devices_Address[BT_Max_Number_Of_Devices][BT_Device_Address_Length]= {0};
+uint8_t BT_Devices_Index=0;
+uint8_t BT_Rx=0;
+uint8_t BT_User_Buffer[192] = {0};
+uint8_t BT_User_Buffer_Index = 0;
+uint8_t BT_Commands_Buffer[BT_Command_Buffer_Length] = {0};
+uint8_t BT_Commands_Buffer_Index = 0;
+uint8_t BT_BOS_Index = 0;
+
+
+uint8_t* BT_User_Buffer_ptr = BT_User_Buffer;
+uint8_t* BT_User_Buffer_beginning_ptr = BT_User_Buffer;
+uint8_t* BT_User_Buffer_Index_ptr = &BT_User_Buffer_Index;
+
+uint8_t BT_To_User_Buffer_flag = 0;
+//1: Bluetooth To User_Buffer
+//0: Bluetooth To BOS Messaging Buffer
+
+uint8_t BT_Connection_flag = 0;
+//1: Connected
+//0: Disconnected
+
+
+uint8_t BT_delete_connecting_char_flag = 0;
+uint8_t BT_delete_disconnecting_char_flag = 0;
+
+uint8_t BT_boot = 1; //flag for sending name to BlueNRG Module on startup
+
+uint8_t BT_Mac_Address_Buffer[6] = {0};
+uint8_t BT_Mac_Address_Buffer_Index = 0;
+uint8_t BT_Receive_Mac_Address_Flag = 0;
+
+/*-------------------------------------------------------------------------------------*/
+void bytes2hex (unsigned char *src, char *out)
+{
+	char HexLookUp[] = "0123456789abcdef";
+
+
+        *out++ = HexLookUp[*src >> 4];
+        *out++ = HexLookUp[*src & 0x0F];
+
+}
+
+/* BlueNRG Private Function Prototypes-------------------------------------------*/
+void BT_Get_Mac_Address()
+{
+
+	char hex_display [2];
+	writePxMutex(PORT_BTC_CONN,(char*)"\t\t\tm",4,cmd50ms, HAL_MAX_DELAY);
+	Delay_ms(1000);
+	for(int i=0;i<6;i++)
+	{
+		bytes2hex( (unsigned char*)&BT_Mac_Address_Buffer[i],hex_display);
+		writePxMutex(PcPort,hex_display,2,cmd50ms, HAL_MAX_DELAY);
+		if(i != 5) writePxMutex(PcPort,(char*)":",1,cmd50ms, HAL_MAX_DELAY);
+		else writePxMutex(PcPort,(char*)"\n\r",2,cmd50ms, HAL_MAX_DELAY);
+
+	}
+
+}
+
+/*-------------------------------------------------------------------------------------*/
+Module_Status BT_Connect(uint8_t * Mac_Address,uint8_t len)
+{
+	Module_Status result = H23R3_OK;
+	uint8_t mac_address_arr[6];
+	uint8_t temp;
+
+	if(len != 17)
+	{
+		result = H23R3_ERR_WrongParams;
+		return result;
+	}
+
+
+		for(int i=0;i<6;i++)
+		{
+			switch(Mac_Address[i*3])
+			{
+			case '0': case '1': case '2': case '3': case '4':
+			case '5':case '6': case '7': case '8': case '9':
+
+				temp = ( (Mac_Address[i*3] - '0')*(16) );
+				break;
+
+			case 'a': case 'b': case 'c':
+			case 'd': case 'e': case 'f':
+				temp = ( (Mac_Address[i*3] - 'a')*(16) );
+				break;
+
+			case 'A': case 'B': case 'C':
+			case 'D': case 'E': case 'F':
+				temp = ( (Mac_Address[i*3] - 'A')*(16) );
+				break;
+
+			default:
+				result = H23R3_ERR_WrongParams;
+				return result;
+
+			}
+
+			switch(Mac_Address[i*3 + 1])
+			{
+			case '0': case '1': case '2': case '3': case '4':
+			case '5': case '6': case '7': case '8': case '9':
+				temp += ( (Mac_Address[i*3 + 1] - '0'));
+				break;
+
+			case 'a': case 'b': case 'c':
+			case 'd': case 'e': case 'f':
+				temp += ( (Mac_Address[i*3 + 1] - 'a'));
+				break;
+
+			case 'A': case 'B': case 'C':
+			case 'D': case 'E': case 'F':
+				temp += ( (Mac_Address[i*3 + 1] - 'A'));
+				break;
+
+			default:
+				result = H23R3_ERR_WrongParams;
+				return result;
+
+			}
+
+			if(i != 5)
+			{
+				if(Mac_Address[i*3 + 1] != ':')
+				{
+					result = H23R3_ERR_WrongParams;
+					return result;
+				}
+			}
+			mac_address_arr[5-i] = temp;
+
+		}
 
 
 
+		writePxMutex(PcPort,(char*)"\t\t\tc",4,cmd50ms, HAL_MAX_DELAY);
+		writePxMutex(PcPort,(char*)mac_address_arr,6,cmd50ms, HAL_MAX_DELAY);
 
-/* Private function prototypes -----------------------------------------------*/
+		return result;
 
 
+
+}
+/* Create CLI commands --------------------------------------------------------*/
+static portBASE_TYPE btClearUserBuffer( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
+static portBASE_TYPE btSendData( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
+static portBASE_TYPE btDisconnect( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
+static portBASE_TYPE btStreamToPort( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
+static portBASE_TYPE btGetMacAddress( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
+static portBASE_TYPE btConnect( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
+
+
+/* CLI command structure : bt-clear-user-buffer */
+const CLI_Command_Definition_t btClearUserBufferCommandDefinition =
+{
+	( const int8_t * ) "bt-clear-user-buffer", /* The command string to type. */
+	( const int8_t * ) "bt-clear-user-buffer:\r\n Clear Bluetooth User Data Buffer\r\n\r\n",
+	btClearUserBuffer, /* The function to run. */
+	0/* No Parameters are expected. */
+};
+//--------------------------------------------------------------------------
+/* CLI command structure : bt-send-data */
+const CLI_Command_Definition_t btSendDataCommandDefinition =
+{
+	( const int8_t * ) "bt-send-data", /* The command string to type. */
+	( const int8_t * ) "bt-send-data:\r\n Send Data over BlueNRG Bluetooth Module \r\n\r\n",
+	btSendData, /* The function to run. */
+	1/* One Parameter is expected. */
+};
+//--------------------------------------------------------------------------
+/* CLI command structure : bt-disconnect */
+const CLI_Command_Definition_t btDisconnectCommandDefinition =
+{
+	( const int8_t * ) "bt-disconnect", /* The command string to type. */
+	( const int8_t * ) "bt-disconnect:\r\n Disconnect BlueNRG module\r\n\r\n",
+	btDisconnect, /* The function to run. */
+	0/* No Parameters are expected. */
+};
+//--------------------------------------------------------------------------
+/* CLI command structure : bt-stream-to-port */
+const CLI_Command_Definition_t btStreamToPortDefinition =
+{
+	( const int8_t * ) "bt-stream-to-port", /* The command string to type. */
+	( const int8_t * ) "bt-stream-to-port:\r\n Streaming BlueNRG data to another port\r\n\r\n",
+	btStreamToPort, /* The function to run. */
+	1/* One Parameter is expected. */
+};
+//--------------------------------------------------------------------------
+/* CLI command structure : bt-get-mac-address */
+const CLI_Command_Definition_t btGetMacAddressDefinition =
+{
+	( const int8_t * ) "bt-get-mac-address", /* The command string to type. */
+	( const int8_t * ) "bt-get-mac-address:\r\n Getting BlueNRG MAC Address\r\n\r\n",
+	btGetMacAddress, /* The function to run. */
+	0/* No Parameters are expected. */
+};
+//--------------------------------------------------------------------------
+/* CLI command structure : bt-connect */
+const CLI_Command_Definition_t btConnectDefinition =
+{
+	( const int8_t * ) "bt-connect", /* The command string to type. */
+	( const int8_t * ) "bt-connect:\r\n Connect to a  BlueNRG Device using its MAC Address\r\n\r\n",
+	btConnect, /* The function to run. */
+	1/* One Parameter is expected. */
+};
+//--------------------------------------------------------------------------
 
 /* -----------------------------------------------------------------------
 	|												 Private Functions	 														|
@@ -211,6 +418,71 @@ uint8_t ClearROtopology(void)
 */
 
 
+/* --- Trigger ST factory bootloader update for a remote module.
+ */
+void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport){
+
+	uint8_t myOutport =0, lastModule =0;
+	int8_t *pcOutputString;
+
+	/* 1. Get route to destination module */
+	myOutport =FindRoute(myID,dst);
+	if(outport && dst == myID){ /* This is a 'via port' update and I'm the last module */
+		myOutport =outport;
+		lastModule =myID;
+	}
+	else if(outport == 0){ /* This is a remote update */
+		if(NumberOfHops(dst)== 1)
+		lastModule = myID;
+		else
+		lastModule = route[NumberOfHops(dst)-1]; /* previous module = route[Number of hops - 1] */
+	}
+
+	/* 2. If this is the source of the message, show status on the CLI */
+	if(src == myID){
+		/* Obtain the address of the output buffer.  Note there is no mutual
+		 exclusion on this buffer as it is assumed only one command console
+		 interface will be used at any one time. */
+		pcOutputString =FreeRTOS_CLIGetOutputBuffer();
+
+		if(outport == 0)		// This is a remote module update
+			sprintf((char* )pcOutputString,pcRemoteBootloaderUpdateMessage,dst);
+		else
+			// This is a 'via port' remote update
+			sprintf((char* )pcOutputString,pcRemoteBootloaderUpdateViaPortMessage,dst,outport);
+
+		strcat((char* )pcOutputString,pcRemoteBootloaderUpdateWarningMessage);
+		writePxITMutex(inport,(char* )pcOutputString,strlen((char* )pcOutputString),cmd50ms);
+		Delay_ms(100);
+	}
+
+	/* 3. Setup my inport and outport for bootloader update */
+	SetupPortForRemoteBootloaderUpdate(inport);
+	SetupPortForRemoteBootloaderUpdate(myOutport);
+
+
+	/* 5. Build a DMA stream between my inport and outport */
+	StartScastDMAStream(inport,myID,myOutport,myID,BIDIRECTIONAL,0xFFFFFFFF,0xFFFFFFFF,false);
+}
+
+/*-----------------------------------------------------------*/
+
+/* --- Setup a port for remote ST factory bootloader update:
+ - Set baudrate to 57600
+ - Enable even parity
+ - Set datasize to 9 bits
+ */
+void SetupPortForRemoteBootloaderUpdate(uint8_t port){
+	UART_HandleTypeDef *huart =GetUart(port);
+
+	huart->Init.BaudRate =57600;
+	huart->Init.Parity = UART_PARITY_EVEN;
+	huart->Init.WordLength = UART_WORDLENGTH_9B;
+	HAL_UART_Init(huart);
+
+	/* The CLI port RXNE interrupt might be disabled so enable here again to be sure */
+	__HAL_UART_ENABLE_IT(huart,UART_IT_RXNE);
+}
 /* --- H23R0 module initialization.
 */
 void Module_Peripheral_Init(void)
@@ -241,19 +513,48 @@ void Module_Peripheral_Init(void)
 Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uint8_t dst, uint8_t shift)
 {
 	Module_Status result = H23R3_OK;
-	static const int8_t *pcMessageWrongParam = ( int8_t * ) "Wrong parameter!\r\n";
-	static const int8_t *pcMessageMustScan = ( int8_t * ) "Must call \"scan\" command first\r\n";
-	uint8_t lenPar = 0;
+
+	switch (code)
+	{
+
+	case CODE_H23Rx_SEND_DATA:
+		//The first parameter is data length ( cMessage[port-1][4] )
+		result = BT_Send_Data(&cMessage[port-1][5], cMessage[port-1][4]);
+		break;
+
+	case CODE_H23Rx_CLEAR_USER_BUFFER:
+		result = BT_Clear_User_Buffer();
+		break;
+
+	case CODE_H23Rx_DISCONNECT_INQUIRE:
+		BT_Disconnect();
+		break;
+
+	case CODE_H23Rx_STREAM_TO_PORT:
+		result = BT_Stream_To_Port(cMessage[port-1][4]);
+		break;
+
+	default:
+		result = H23R3_ERR_UnknownMessage;
+		break;
+	}
 
 
 
 	return result;
 }
 
+
 /* --- Register this module CLI Commands
 */
 void RegisterModuleCLICommands(void)
 {
+	FreeRTOS_CLIRegisterCommand (&btClearUserBufferCommandDefinition);
+	FreeRTOS_CLIRegisterCommand (&btSendDataCommandDefinition);
+	FreeRTOS_CLIRegisterCommand (&btDisconnectCommandDefinition);
+	FreeRTOS_CLIRegisterCommand (&btStreamToPortDefinition);
+	FreeRTOS_CLIRegisterCommand (&btGetMacAddressDefinition);
+	FreeRTOS_CLIRegisterCommand (&btConnectDefinition);
 
 }
 
@@ -283,13 +584,295 @@ uint8_t GetPort(UART_HandleTypeDef *huart)
 	|																APIs	 																 	|
    -----------------------------------------------------------------------
 */
+void BT_Receive_Data_To_BOS(void){
 
-/*-----------------------------------------------------------*/
+	BT_To_User_Buffer_flag = 0;
+
+}
+//-----------------------------------------------------------------------
+Module_Status BT_Receive_Data(uint8_t* buffer,uint8_t size){
+	Module_Status result = H23R3_OK;
+	if(buffer!= NULL && size!=0)
+	{
+		BT_To_User_Buffer_flag = 1;
+		BT_User_Buffer_beginning_ptr = buffer;
+		BT_User_Buffer_ptr = buffer;
+		BT_User_Buffer_Length = size;
+		*BT_User_Buffer_Index_ptr = 0;
+
+	}
+	else
+	{
+		result = H23R3_ERROR;
+	}
+	return result;
+
+}
+//-----------------------------------------------------------------------
+Module_Status BT_Send_Message(uint8_t dst,uint16_t code,uint16_t numberOfParams){
+
+	Module_Status result = H23R3_OK;
+	if(BT_Connection_flag == 1)
+	{
+		SendMessageToModule(dst,code,numberOfParams);
+	}
+	else
+	{
+	    result = H23R3_ERROR;
+	}
+
+	return result;
+
+
+
+}
+//-----------------------------------------------------------------------
+Module_Status BT_Send_Data(uint8_t* BT_Data,uint8_t length){
+
+	Module_Status result = H23R3_OK;
+	if(BT_Connection_flag == 1 && length!=0 && BT_Data!=NULL)
+	{
+		for(int i=0;i<length;i++)
+		{
+			writePxMutex(PORT_BTC_CONN, (char *)&BT_Data[0+i], 1, cmd50ms, HAL_MAX_DELAY);
+		}
+
+	}
+	else
+	{
+		if(BT_Connection_flag == 1) result = H23R3_ERR_WrongParams;
+		else result = H23R3_ERROR;
+	}
+
+	return result;
+
+}
+//-----------------------------------------------------------------------
+Module_Status BT_Clear_User_Buffer(void){
+
+	 Module_Status result = H23R3_OK;
+
+
+	 if(BT_To_User_Buffer_flag == 1)
+	 {
+		memset(BT_User_Buffer_beginning_ptr,0,BT_User_Buffer_Length);
+		BT_User_Buffer_ptr = BT_User_Buffer_beginning_ptr;
+		*BT_User_Buffer_Index_ptr = 0;
+	 }
+	 else
+	 {
+		 result = H23R3_ERROR;
+	 }
+
+	 return result;
+
+
+}
+//-----------------------------------------------------------------------
+void BT_RESET_MODULE(void){
+
+	writePxMutex(PORT_BTC_CONN,(char*)"\t\t\tr",4,cmd50ms, HAL_MAX_DELAY);
+	BT_Connection_flag = 0;
+
+
+}
+//-----------------------------------------------------------------------
+void BT_Disconnect(void){
+	BT_Connection_flag = 0;
+	BT_RESET_MODULE();
+}
+//-----------------------------------------------------------------------
+Module_Status BT_Stream_To_Port(uint8_t port_number){
+	Module_Status result = H23R3_OK;
+	if(port_number >= 1 && port_number<6)
+	{
+		if(BT_Connection_flag == 1)
+		{
+			//UpdateBaudrate(port_number, 115200);
+			StartScastDMAStream(PORT_BTC_CONN, myID, port_number, myID, BIDIRECTIONAL, 0xFFFFFFFF, 0xFFFFFFFF, false);
+		}
+		else
+		{
+			result = H23R3_ERROR;
+		}
+	}
+	else
+	{
+		result = H23R3_ERR_WrongParams;
+	}
+	return result;
+}
+
 
 /* -----------------------------------------------------------------------
-	|															Commands																 	|
+	|					Commands										  |
    -----------------------------------------------------------------------
 */
+static portBASE_TYPE btClearUserBuffer( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString )
+{
+	/* Remove compile time warnings about unused parameters, and check the
+	write buffer is not NULL.  NOTE - for simplicity, this example assumes the
+	write buffer length is adequate, so does not check for buffer overflows. */
+	( void ) pcCommandString;
+	( void ) xWriteBufferLen;
+	configASSERT( pcWriteBuffer );
 
+	BT_Clear_User_Buffer();
+
+	writePxMutex(PcPort, "Clearing Bluetooth User Data Buffer\r\n", 37, cmd50ms, HAL_MAX_DELAY);
+
+	/* There is no more data to return after this single string, so return pdFALSE. */
+	return pdFALSE;
+}
+//--------------------------------------------------------------------------------------------------------
+static portBASE_TYPE btSendData( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString )
+{
+
+	Module_Status result = H23R3_OK;
+	int8_t *pcParameterString1;
+	portBASE_TYPE xParameterStringLength1 = 0;
+	/* Remove compile time warnings about unused parameters, and check the
+	write buffer is not NULL.  NOTE - for simplicity, this example assumes the
+	write buffer length is adequate, so does not check for buffer overflows. */
+	( void ) pcCommandString;
+	( void ) xWriteBufferLen;
+	configASSERT( pcWriteBuffer );
+
+	/* Obtain the 1st parameter string: Data to be sent*/
+	pcParameterString1 = ( int8_t * ) FreeRTOS_CLIGetParameter (pcCommandString, 1, &xParameterStringLength1);
+
+	result = BT_Send_Data(pcParameterString1, xParameterStringLength1);
+
+	if(result == H23R3_ERR_WrongParams)
+	{
+		writePxMutex(PcPort, "Wrong input parameter (No data to be sent)\r\n", 44, cmd50ms, HAL_MAX_DELAY);
+	}
+	else if(result == H23R3_ERROR)
+	{
+		writePxMutex(PcPort, "BlueNRG module is Not connected to any device\r\n", 47, cmd50ms, HAL_MAX_DELAY);
+	}
+	else
+	{
+		writePxMutex(PcPort,"Done! (Data has been sent)\r\n", 28, cmd50ms, HAL_MAX_DELAY);
+	}
+	/* There is no more data to return after this single string, so return pdFALSE. */
+	return pdFALSE;
+}
+//--------------------------------------------------------------------------------------------------------
+static portBASE_TYPE btDisconnect( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString )
+{
+	/* Remove compile time warnings about unused parameters, and check the
+	write buffer is not NULL.  NOTE - for simplicity, this example assumes the
+	write buffer length is adequate, so does not check for buffer overflows. */
+	( void ) pcCommandString;
+	( void ) xWriteBufferLen;
+	configASSERT( pcWriteBuffer );
+
+	if(BT_Connection_flag == 1)
+	{
+		BT_Disconnect();
+		sprintf( ( char * ) pcWriteBuffer, "BlueNRG Disconnected\r\n");
+	}
+	else
+	{
+		sprintf( ( char * ) pcWriteBuffer, "BlueNRG is Not Connected\r\n");
+
+	}
+
+
+	/* There is no more data to return after this single string, so return pdFALSE. */
+	return pdFALSE;
+}
+//--------------------------------------------------------------------------------------------------------
+static portBASE_TYPE btStreamToPort( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString )
+{
+
+	Module_Status result = H23R3_OK;
+	int8_t *pcParameterString1;
+	portBASE_TYPE xParameterStringLength1 = 0;
+	uint8_t lenPar = 0;
+	/* Remove compile time warnings about unused parameters, and check the
+	write buffer is not NULL.  NOTE - for simplicity, this example assumes the
+	write buffer length is adequate, so does not check for buffer overflows. */
+	( void ) pcCommandString;
+	( void ) xWriteBufferLen;
+	configASSERT( pcWriteBuffer );
+
+	/* Obtain the 1st parameter string: Data to be sent*/
+	pcParameterString1 = ( int8_t * ) FreeRTOS_CLIGetParameter (pcCommandString, 1, &xParameterStringLength1);
+
+	lenPar = strlen((char *)pcParameterString1);
+	if(lenPar < 2)
+	{
+		result = H23R3_ERR_WrongParams;
+	}
+	else if ( ('p' == pcParameterString1[0]) || ('P' == pcParameterString1[0]) )
+	{
+		result = BT_Stream_To_Port(pcParameterString1[1] - '0');
+	}
+
+
+	if(result == H23R3_ERR_WrongParams)
+	{
+		writePxMutex(PcPort, "Wrong input parameter (Wrong Port)\r\n", 36, cmd50ms, HAL_MAX_DELAY);
+	}
+	else if(result == H23R3_ERROR)
+	{
+		writePxMutex(PcPort, "Can't Start Stream, BlueNRG module is Not connected to any device\r\n", 67, cmd50ms, HAL_MAX_DELAY);
+	}
+	else
+	{
+		writePxMutex(PcPort,"Streaming BlueNRG Data to ", 26, cmd50ms, HAL_MAX_DELAY);
+		writePxMutex(PcPort,pcParameterString1, lenPar, cmd50ms, HAL_MAX_DELAY);
+		writePxMutex(PcPort,", baudrate: 115200\r\n", 20, cmd50ms, HAL_MAX_DELAY);
+
+
+	}
+	/* There is no more data to return after this single string, so return pdFALSE. */
+	return pdFALSE;
+}
+//--------------------------------------------------------------------------------------------------------
+static portBASE_TYPE btGetMacAddress( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString )
+{
+	/* Remove compile time warnings about unused parameters, and check the
+	write buffer is not NULL.  NOTE - for simplicity, this example assumes the
+	write buffer length is adequate, so does not check for buffer overflows. */
+	( void ) pcCommandString;
+	( void ) xWriteBufferLen;
+	configASSERT( pcWriteBuffer );
+
+	BT_Get_Mac_Address();
+
+
+	/* There is no more data to return after this single string, so return pdFALSE. */
+	return pdFALSE;
+}
+//--------------------------------------------------------------------------------------------------------
+static portBASE_TYPE btConnect( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString )
+{
+
+	Module_Status result = H23R3_OK;
+	int8_t *pcParameterString1;
+	portBASE_TYPE xParameterStringLength1 = 0;
+	/* Remove compile time warnings about unused parameters, and check the
+	write buffer is not NULL.  NOTE - for simplicity, this example assumes the
+	write buffer length is adequate, so does not check for buffer overflows. */
+	( void ) pcCommandString;
+	( void ) xWriteBufferLen;
+	configASSERT( pcWriteBuffer );
+
+	/* Obtain the 1st parameter string: Data to be sent*/
+	pcParameterString1 = ( int8_t * ) FreeRTOS_CLIGetParameter (pcCommandString, 1, &xParameterStringLength1);
+
+	result = BT_Connect(pcParameterString1, xParameterStringLength1);
+
+	if(result == H23R3_ERR_WrongParams)
+	{
+		writePxMutex(PcPort, "Wrong input parameter (Wrong Port)\r\n", 36, cmd50ms, HAL_MAX_DELAY);
+	}
+
+	/* There is no more data to return after this single string, so return pdFALSE. */
+	return pdFALSE;
+}
 
 /************************ (C) COPYRIGHT HEXABITZ *****END OF FILE****/

@@ -45,16 +45,16 @@
 									<listOptionValue builtIn="false" value="H23R3"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.includepaths.168375260" name="Include paths (-I)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.includepaths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="../../Thirdparty/CMSIS/Include"/>
-									<listOptionValue builtIn="false" value="../../Thirdparty/CMSIS/Device/ST/STM32F0xx/Include"/>
 									<listOptionValue builtIn="false" value="../../Thirdparty/STM32F0xx_HAL_Driver/Inc/Legacy"/>
 									<listOptionValue builtIn="false" value="../../Thirdparty/STM32F0xx_HAL_Driver/Inc"/>
-									<listOptionValue builtIn="false" value="../../Thirdparty/Middleware/FreeRTOS/Source/include"/>
-									<listOptionValue builtIn="false" value="../../Thirdparty/Middleware/FreeRTOS/Source/portable/GCC/ARM_CM0"/>
-									<listOptionValue builtIn="false" value="../../Thirdparty/Middleware/FreeRTOS/Source/CMSIS_RTOS"/>
 									<listOptionValue builtIn="false" value="../../H23R3x"/>
 									<listOptionValue builtIn="false" value="../../BOS"/>
 									<listOptionValue builtIn="false" value="../../User"/>
+									<listOptionValue builtIn="false" value="../../Thirdparty/CMSIS/STM32F0xx/Include"/>
+									<listOptionValue builtIn="false" value="../../Thirdparty/CMSIS/STM32F0xx/Device/ST/STM32F0xx/Include"/>
+									<listOptionValue builtIn="false" value="../../Thirdparty/Middleware/STM32F0xx/FreeRTOS/Source/include"/>
+									<listOptionValue builtIn="false" value="../../Thirdparty/Middleware/STM32F0xx/FreeRTOS/Source/portable/GCC/ARM_CM0"/>
+									<listOptionValue builtIn="false" value="../../Thirdparty/Middleware/STM32F0xx/FreeRTOS/Source/CMSIS_RTOS"/>
 								</option>
 								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard.1700605883" name="Language standard" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard" useByScannerDiscovery="true" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard.value.isoc99" valueType="enumerated"/>
 								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.warnings.all.76507596" name="Enable all warnings about questionable constructions (-Wall)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.warnings.all" useByScannerDiscovery="false" value="false" valueType="boolean"/>
@@ -67,6 +67,7 @@
 							</tool>
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.919904387" name="MCU GCC Linker" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker">
 								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.option.script.1678011804" name="Linker Script (-T)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.option.script" useByScannerDiscovery="false" value="${workspace_loc:/${ProjName}/STM32F091CBUX_FLASH.ld}" valueType="string"/>
+								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.option.gcsections.841981528" name="Discard unused sections (-Wl,--gc-sections)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.option.gcsections" useByScannerDiscovery="false" value="true" valueType="boolean"/>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.input.1845608495" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -97,15 +98,6 @@
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
-	<storageModule moduleId="scannerConfiguration">
-		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		<scannerConfigBuildInfo instanceId="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.release.1147278054;com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.release.1147278054.;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.2075446585;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1887410772">
-			<autodiscovery enabled="false" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1289058788;com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1289058788.;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1165520967;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.872752394">
-			<autodiscovery enabled="false" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-	</storageModule>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="H23R3">
 			<resource resourceType="PROJECT" workspacePath="/H23R3x"/>
@@ -116,5 +108,17 @@
 		<configuration configurationName="Release">
 			<resource resourceType="PROJECT" workspacePath="/H23R3x"/>
 		</configuration>
+	</storageModule>
+	<storageModule moduleId="scannerConfiguration">
+		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		<scannerConfigBuildInfo instanceId="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.release.1147278054;com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.release.1147278054.;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.2075446585;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1887410772">
+			<autodiscovery enabled="false" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1289058788.58523746;com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1289058788.58523746.;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.442985163;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.2115983486">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1289058788;com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1289058788.;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1165520967;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.872752394">
+			<autodiscovery enabled="false" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
 	</storageModule>
 </cproject>
