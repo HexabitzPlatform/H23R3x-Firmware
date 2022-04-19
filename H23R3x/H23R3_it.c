@@ -10,6 +10,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "BOS.h"
 
+uint8_t temp_length[NumOfPorts] = {0};
+uint8_t temp_index[NumOfPorts] = {0};
+
 uint8_t cnt_0x09 = 0; // '\t' character code
 
 /* External variables --------------------------------------------------------*/
