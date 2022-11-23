@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.2.7 - Copyright (C) 2017-2021 Hexabitz
+ BitzOS (BOS) V0.2.7 - Copyright (C) 2017-2022 Hexabitz
  All rights reserved
 
  File Name     : H23R3_uart.h
@@ -7,24 +7,21 @@
  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __H23Rx_uart_H
-#define __H23Rx_uart_H
+#ifndef __usart_H
+#define __usart_H
 #ifdef __cplusplus
  extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f0xx_hal.h"
+#include "BOS.h"
 
 /* External variables -----------------------------------------------*/
-extern FlagStatus UartRxReady;
-extern FlagStatus UartTxReady;
-extern uint8_t PcPort;
-
 #ifndef __N
-	extern uint16_t arrayPortsDir[MaxNumOfModules];									/* Array ports directions */
+extern uint16_t arrayPortsDir[MaxNumOfModules]; /* Array ports directions */
 #else
-	extern uint16_t arrayPortsDir[__N];
+extern uint16_t arrayPortsDir[__N ];
 #endif 
 
 // Blocking (polling-based) read
@@ -38,24 +35,23 @@ extern uint8_t PcPort;
 
 /* External function prototypes -----------------------------------------------*/
 
-extern HAL_StatusTypeDef readPxMutex(uint8_t port, char *buffer, uint16_t n, uint32_t mutexTimeout, uint32_t portTimeout);
-extern HAL_StatusTypeDef writePxMutex(uint8_t port, char *buffer, uint16_t n, uint32_t mutexTimeout, uint32_t portTimeout);
-extern HAL_StatusTypeDef readPxITMutex(uint8_t port, char *buffer, uint16_t n, uint32_t mutexTimeout);
-extern HAL_StatusTypeDef writePxITMutex(uint8_t port, char *buffer, uint16_t n, uint32_t mutexTimeout);
-extern HAL_StatusTypeDef writePxDMAMutex(uint8_t port, char *buffer, uint16_t n, uint32_t mutexTimeout);
+extern HAL_StatusTypeDef readPxMutex(uint8_t port,char *buffer,uint16_t n,uint32_t mutexTimeout,uint32_t portTimeout);
+extern HAL_StatusTypeDef writePxMutex(uint8_t port,char *buffer,uint16_t n,uint32_t mutexTimeout,uint32_t portTimeout);
+extern HAL_StatusTypeDef readPxITMutex(uint8_t port,char *buffer,uint16_t n,uint32_t mutexTimeout);
+extern HAL_StatusTypeDef writePxITMutex(uint8_t port,char *buffer,uint16_t n,uint32_t mutexTimeout);
+extern HAL_StatusTypeDef writePxDMAMutex(uint8_t port,char *buffer,uint16_t n,uint32_t mutexTimeout);
 extern BOS_Status ReadPortsDirMSG(uint8_t SourceModule);
-
 #ifdef __cplusplus
 }
 #endif
-#endif /*__H23Rx_uart_H */
+#endif /*__ usart_H */
 
 /**
-  * @}
-  */
+ * @}
+ */
 
 /**
-  * @}
-  */
+ * @}
+ */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

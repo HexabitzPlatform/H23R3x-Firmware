@@ -90,7 +90,6 @@ uint16_t EE_ReadVariable(uint16_t VirtAddress,uint16_t *Data);
 uint16_t EE_WriteVariable(uint16_t VirtAddress,uint16_t Data);
 uint16_t Flash_WriteVariable(uint32_t Address,uint16_t Data);
 BOS_Status EraseSector(uint32_t sector );
-
 #endif /* __BOS_EEPROM_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

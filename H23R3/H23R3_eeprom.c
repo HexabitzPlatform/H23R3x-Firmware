@@ -799,6 +799,7 @@ BOS_Status EraseSector(uint32_t sector ) {
 
 	return result;
 }
+
 /**
  * @}
  */
