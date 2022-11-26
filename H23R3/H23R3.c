@@ -38,6 +38,17 @@ module_param_t modParam[NUM_MODULE_PARAMS] ={{.paramPtr = NULL, .paramFormat =FM
 void ExecuteMonitor(void);
 
 /* Create CLI commands --------------------------------------------------------*/
+portBASE_TYPE CLI_Blue_Transmit_DataCommand(int8_t *pcWriteBuffer,size_t xWriteBufferLen,const int8_t *pcCommandString);
+
+
+/* CLI command structure : Blue_Transmit_Data */
+const CLI_Command_Definition_t CLI_Blue_Transmit_DataCommandDefinition =
+{
+	( const int8_t * ) "blue_transmit_data", /* The command string to type. */
+	( const int8_t * ) "blue_transmit_data :\r\n Parameters required to execute a Blue_Transmit_Data: my data \r\n\r\n",
+	CLI_Blue_Transmit_DataCommand, /* The function to run. */
+	1 /* one parameters are expected. */
+};
 
 /*-----------------------------------------------------------*/
 
@@ -288,11 +299,12 @@ void Module_Peripheral_Init(void){
 	/* Array ports */
 	MX_USART1_UART_Init();
 	MX_USART2_UART_Init();
-	MX_USART3_UART_Init();
 	MX_USART4_UART_Init();
 	MX_USART5_UART_Init();
 	MX_USART6_UART_Init();
 
+    //BLUENRG PORT
+	MX_USART3_UART_Init();
 
 	/* Create module special task (if needed) */
 }
@@ -300,19 +312,26 @@ void Module_Peripheral_Init(void){
 /*-----------------------------------------------------------*/
 /* --- H23R3 message processing task.
  */
-Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_t dst,uint8_t shift){
-	Module_Status result =H23R3_OK;
+Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uint8_t dst, uint8_t shift)
+{
+	Module_Status result = H23R3_OK;
+	uint16_t Size;
+	switch (code)
+	{
 
-
-	switch(code){
+	case CODE_H23R3_Blue_Transmit_Data:
+		Size=(uint16_t)cMessage[port - 1][shift];
+		BlueTransmitData(&cMessage[port - 1][1+shift],Size);
+		break;
 
 		default:
-			result =H23R3_ERR_UnknownMessage;
+			result = H23R3_ERR_UnknownMessage;
 			break;
 	}
-	
+
 	return result;
 }
+
 /* --- Get the port for a given UART. 
  */
 uint8_t GetPort(UART_HandleTypeDef *huart){
@@ -337,7 +356,9 @@ uint8_t GetPort(UART_HandleTypeDef *huart){
 
 /* --- Register this module CLI Commands
  */
-void RegisterModuleCLICommands(void){
+void RegisterModuleCLICommands(void)
+{
+	 FreeRTOS_CLIRegisterCommand(&CLI_Blue_Transmit_DataCommandDefinition);
 
 }
 
@@ -375,7 +396,25 @@ void RegisterModuleCLICommands(void){
  |								  APIs							          | 																 	|
 /* -----------------------------------------------------------------------
  */
+Module_Status BlueTransmitData(uint8_t* data,uint16_t Size){
+	Module_Status status=H23R3_OK;
 
+	if(data!=NULL && Size!=0)
+	{
+	for(int i=0;i<Size;i++)
+		{
+			writePxMutex(P4, (char *)&data[0+i], 1, cmd50ms, HAL_MAX_DELAY);
+		}
+
+	}
+	else
+	{
+		status=H23R3_ERROR;
+
+	}
+
+	return status;
+}
 
 /*-----------------------------------------------------------*/
 
@@ -384,7 +423,38 @@ void RegisterModuleCLICommands(void){
  |								Commands							      |
    -----------------------------------------------------------------------
  */
+portBASE_TYPE CLI_Blue_Transmit_DataCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
+	Module_Status status = H23R3_OK;
 
+
+
+	static int8_t *pcParameterString1;
+	portBASE_TYPE xParameterStringLength1 =0;
+
+	static const int8_t *pcOKMessage=(int8_t* )"BlueNRG Bluetooth is on \r\n  \n\r";
+	static const int8_t *pcWrongParamsMessage =(int8_t* )"Wrong Params!\n\r";
+
+
+	(void )xWriteBufferLen;
+	configASSERT(pcWriteBuffer);
+
+	pcParameterString1 =(int8_t* )FreeRTOS_CLIGetParameter(pcCommandString, 1, &xParameterStringLength1 );
+
+
+	status=BlueTransmitData(pcParameterString1, xParameterStringLength1);
+	if(status == H23R3_OK)
+	{
+		sprintf((char* )pcWriteBuffer,(char* )pcOKMessage,pcParameterString1);
+
+	}
+
+	else if(status == H23R3_ERROR)
+		strcpy((char* )pcWriteBuffer,(char* )pcWrongParamsMessage);
+
+
+
+	return pdFALSE;
+}
 
 
 /*-----------------------------------------------------------*/
