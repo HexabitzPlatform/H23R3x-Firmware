@@ -46,6 +46,7 @@ void DMA_Init(void)
 	/* DMA controller clock enable */
 	__DMA1_CLK_ENABLE();
 	__DMA2_CLK_ENABLE();
+	 __HAL_RCC_DMA2_CLK_ENABLE();
 	
 	/* Initialize messaging RX DMAs x 6 - Update for non-standard MCUs */
 #ifdef _P1
