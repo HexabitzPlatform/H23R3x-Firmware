@@ -34,18 +34,18 @@ extern uint8_t numOfRecordedSnippets;
 
 
 /* Create CLI commands --------------------------------------------------------*/
-//static portBASE_TYPE btClearUserBuffer( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
+static portBASE_TYPE CLI_BT_Send_DataCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
 
 
 
-///* CLI command structure : bt-clear-user-buffer */
-//const CLI_Command_Definition_t btClearUserBufferCommandDefinition =
-//{
-//	( const int8_t * ) "bt-clear-user-buffer", /* The command string to type. */
-//	( const int8_t * ) "bt-clear-user-buffer:\r\n Clear Bluetooth User Data Buffer\r\n\r\n",
-//	btClearUserBuffer, /* The function to run. */
-//	0/* No Parameters are expected. */
-//};
+/* CLI command structure : bt-clear-user-buffer */
+const CLI_Command_Definition_t CLI_BT_Send_DataCommandDefinition =
+{
+	( const int8_t * ) "bt-send_data", /* The command string to type. */
+	( const int8_t * ) "bt-send_data:\r\n Parameters required to execute a BT_Send_Data: my data\r\n\r\n",
+	CLI_BT_Send_DataCommand, /* The function to run. */
+	1/* one parameters are expected. */
+};
 
 
 /* -----------------------------------------------------------------------
@@ -318,14 +318,15 @@ void Module_Peripheral_Init(void)
 Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uint8_t dst, uint8_t shift)
 {
 	Module_Status result = H23R3_OK;
-
+	uint16_t Size;
 	switch (code)
 	{
 
-//	case CODE_H23Rx_SEND_DATA:
-//		//The first parameter is data length ( cMessage[port-1][4] )
-//		result = BT_Send_Data(&cMessage[port-1][5], cMessage[port-1][4]);
-//		break;
+	case CODE_H23Rx_SEND_DATA:
+
+		Size=(uint16_t)cMessage[port - 1][shift];
+		BT_Send_Data(&cMessage[port - 1][1+shift],Size);
+		break;
 
 
 
@@ -344,7 +345,7 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 */
 void RegisterModuleCLICommands(void)
 {
-//	FreeRTOS_CLIRegisterCommand (&btClearUserBufferCommandDefinition);
+	FreeRTOS_CLIRegisterCommand (&CLI_BT_Send_DataCommandDefinition);
 
 
 }
@@ -402,22 +403,36 @@ Module_Status BT_Send_Data(uint8_t* BT_Data,uint8_t length){
 	|					Commands										  |
    -----------------------------------------------------------------------
 */
-//static portBASE_TYPE btClearUserBuffer( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString )
-//{
-//	/* Remove compile time warnings about unused parameters, and check the
-//	write buffer is not NULL.  NOTE - for simplicity, this example assumes the
-//	write buffer length is adequate, so does not check for buffer overflows. */
-//	( void ) pcCommandString;
-//	( void ) xWriteBufferLen;
-//	configASSERT( pcWriteBuffer );
-//
-//	BT_Clear_User_Buffer();
-//
-//	writePxMutex(PcPort, "Clearing Bluetooth User Data Buffer\r\n", 37, cmd50ms, HAL_MAX_DELAY);
-//
-//	/* There is no more data to return after this single string, so return pdFALSE. */
-//	return pdFALSE;
-//}
+static portBASE_TYPE CLI_BT_Send_DataCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString )
+{
+	Module_Status status = H23R3_OK;
+
+	static int8_t *pcParameterString1;
+	portBASE_TYPE xParameterStringLength1 =0;
+
+	static const int8_t *pcOKMessage=(int8_t* )"Blue NRG is on \r\n  \n\r";
+	static const int8_t *pcWrongParamsMessage =(int8_t* )"Wrong Params!\n\r";
+
+
+	(void )xWriteBufferLen;
+	configASSERT(pcWriteBuffer);
+
+	pcParameterString1 =(int8_t* )FreeRTOS_CLIGetParameter(pcCommandString, 1, &xParameterStringLength1 );
+
+
+	status=BT_Send_Data(pcParameterString1, xParameterStringLength1);
+	if(status == H23R3_OK)
+	{
+		sprintf((char* )pcWriteBuffer,(char* )pcOKMessage,pcParameterString1);
+
+	}
+
+	else if(status == H23R3_ERROR)
+		strcpy((char* )pcWriteBuffer,(char* )pcWrongParamsMessage);
+
+	/* There is no more data to return after this single string, so return pdFALSE. */
+	return pdFALSE;
+}
 //--------------------------------------------------------------------------------------------------------
 
 
