@@ -164,7 +164,7 @@ extern void SystemClock_Config(void);
    -----------------------------------------------------------------------
 */
 
-
+extern Module_Status BT_Send_Data(uint8_t* BT_Data,uint8_t length);
 void SetupPortForRemoteBootloaderUpdate(uint8_t port);
 void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);
 

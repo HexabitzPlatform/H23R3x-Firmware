@@ -380,15 +380,17 @@ uint8_t GetPort(UART_HandleTypeDef *huart)
 Module_Status BT_Send_Data(uint8_t* BT_Data,uint8_t length){
 
 	Module_Status result = H23R3_OK;
-//	if(BT_Connection_flag == 1 && length!=0 && BT_Data!=NULL)
+
+	if(BT_Data!=NULL && length!=0)
 	{
-		for(int i=0;i<length;i++)
-		{
-			writePxMutex(PORT_BTC_CONN, (char *)&BT_Data[0+i], 1, cmd50ms, HAL_MAX_DELAY);
-		}
+		HAL_UART_Transmit(&huart3, BT_Data, length, HAL_MAX_DELAY);
 
-//	}
+	}
+	else
+	{
+		result=H23R3_ERROR;
 
+	}
 
 	return result;
 
@@ -415,7 +417,7 @@ Module_Status BT_Send_Data(uint8_t* BT_Data,uint8_t length){
 //
 //	/* There is no more data to return after this single string, so return pdFALSE. */
 //	return pdFALSE;
-}
+//}
 //--------------------------------------------------------------------------------------------------------
 
 
