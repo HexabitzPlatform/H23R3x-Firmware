@@ -368,8 +368,8 @@ void SetupDMAInterrupts(DMA_HandleTypeDef *hDMA, uint8_t priority)
 		case (uint32_t)DMA2_Channel3:
 		case (uint32_t)DMA2_Channel4:
 		case (uint32_t)DMA2_Channel5:
-			HAL_NVIC_SetPriority(DMA1_Ch4_7_DMA2_Ch3_5_IRQn, priority, 0);
-			HAL_NVIC_EnableIRQ(DMA1_Ch4_7_DMA2_Ch3_5_IRQn);			
+//			HAL_NVIC_SetPriority(DMA1_Ch4_7_DMA2_Ch3_5_IRQn, priority, 0);
+//			HAL_NVIC_EnableIRQ(DMA1_Ch4_7_DMA2_Ch3_5_IRQn);
 			break;
 		
 		default:

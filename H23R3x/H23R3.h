@@ -102,6 +102,9 @@
 #define	USART3_AF				GPIO_AF4_USART3
 
 
+/*..........Enable User Data from external ports (like USB, Ethernet, BLE ...)......*/
+#define __USER_DATA_BUFFER
+
 #define NUM_MODULE_PARAMS		1
 
 /* Module EEPROM Variables */
@@ -129,8 +132,6 @@ typedef enum
 
 /*-------------------------------------------------------------------------------------*/
 
-
-/* BlueNRG Private Function Prototypes-------------------------------------------*/
 
 
 

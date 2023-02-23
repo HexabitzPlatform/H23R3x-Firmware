@@ -305,6 +305,9 @@ void Module_Peripheral_Init(void)
   MX_USART3_UART_Init();
 //  UpdateBaudrate(6, 115200);
 
+  HAL_UART_Receive_DMA(&huart3, UserBufferData, sizeof(UserBufferData));
+  DMACountUserDataBuffer=&(DMA2_Channel3->CNDTR);
+
 }
 
 /*-----------------------------------------------------------*/
