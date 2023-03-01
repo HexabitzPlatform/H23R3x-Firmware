@@ -41,8 +41,8 @@ static portBASE_TYPE CLI_BT_Send_DataCommand( int8_t *pcWriteBuffer, size_t xWri
 /* CLI command structure : bt-clear-user-buffer */
 const CLI_Command_Definition_t CLI_BT_Send_DataCommandDefinition =
 {
-	( const int8_t * ) "bt-send_data", /* The command string to type. */
-	( const int8_t * ) "bt-send_data:\r\n Parameters required to execute a BT_Send_Data: my data\r\n\r\n",
+	( const int8_t * ) "bt_send_data", /* The command string to type. */
+	( const int8_t * ) "bt_send_data:\r\n Parameters required to execute a BT_Send_Data: my data\r\n\r\n",
 	CLI_BT_Send_DataCommand, /* The function to run. */
 	1/* one parameters are expected. */
 };
@@ -413,7 +413,7 @@ static portBASE_TYPE CLI_BT_Send_DataCommand( int8_t *pcWriteBuffer, size_t xWri
 	static int8_t *pcParameterString1;
 	portBASE_TYPE xParameterStringLength1 =0;
 
-	static const int8_t *pcOKMessage=(int8_t* )"Blue NRG is on \r\n  \n\r";
+	static const int8_t *pcOKMessage=(int8_t* )"Data was sent using BLE";
 	static const int8_t *pcWrongParamsMessage =(int8_t* )"Wrong Params!\n\r";
 
 
