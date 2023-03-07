@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.2.7 - Copyright (C) 2017-2021 Hexabitz
+ BitzOS (BOS) V0.2.9 - Copyright (C) 2017-2023 Hexabitz
  All rights reserved
 
  File Name     : H23R3_dma.c
@@ -46,6 +46,7 @@ void DMA_Init(void)
 	/* DMA controller clock enable */
 	__DMA1_CLK_ENABLE();
 	__DMA2_CLK_ENABLE();
+	 __HAL_RCC_DMA2_CLK_ENABLE();
 	
 	/* Initialize messaging RX DMAs x 6 - Update for non-standard MCUs */
 #ifdef _P1
@@ -367,8 +368,8 @@ void SetupDMAInterrupts(DMA_HandleTypeDef *hDMA, uint8_t priority)
 		case (uint32_t)DMA2_Channel3:
 		case (uint32_t)DMA2_Channel4:
 		case (uint32_t)DMA2_Channel5:
-			HAL_NVIC_SetPriority(DMA1_Ch4_7_DMA2_Ch3_5_IRQn, priority, 0);
-			HAL_NVIC_EnableIRQ(DMA1_Ch4_7_DMA2_Ch3_5_IRQn);			
+//			HAL_NVIC_SetPriority(DMA1_Ch4_7_DMA2_Ch3_5_IRQn, priority, 0);
+//			HAL_NVIC_EnableIRQ(DMA1_Ch4_7_DMA2_Ch3_5_IRQn);
 			break;
 		
 		default:

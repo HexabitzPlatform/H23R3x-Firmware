@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.2.7 - Copyright (C) 2017-2021 Hexabitz
+ BitzOS (BOS) V0.2.9 - Copyright (C) 2017-2023 Hexabitz
  All rights reserved
 
  File Name     : H23Rx.h
@@ -26,7 +26,7 @@
 
 
 /* Port-related definitions */
-#define	NumOfPorts			6
+#define	NumOfPorts			5
 #define P_PROG 				P2						/* ST factory bootloader UART */
 
 /* Define available ports */
@@ -35,7 +35,7 @@
 #define _P3
 #define _P4
 #define _P5
-#define _P6
+//#define _P6
 
 /* Define available USARTs */
 #define _Usart1 1
@@ -65,6 +65,12 @@
 #define	USART2_TX_PORT		GPIOA
 #define	USART2_RX_PORT		GPIOA
 #define	USART2_AF			GPIO_AF1_USART2
+
+//#define	USART3_TX_PIN		GPIO_PIN_10
+//#define	USART3_RX_PIN		GPIO_PIN_11
+//#define	USART3_TX_PORT		GPIOB
+//#define	USART3_RX_PORT		GPIOB
+//#define	USART3_AF			GPIO_AF4_USART3
 
 #define	USART4_TX_PIN		GPIO_PIN_0
 #define	USART4_RX_PIN		GPIO_PIN_1
@@ -96,6 +102,9 @@
 #define	USART3_AF				GPIO_AF4_USART3
 
 
+/*..........Enable User Data from external ports (like USB, Ethernet, BLE ...)......*/
+#define __USER_DATA_BUFFER
+
 #define NUM_MODULE_PARAMS		1
 
 /* Module EEPROM Variables */
@@ -117,62 +126,12 @@ typedef enum
 } Module_Status;
 
 
-//constants:
-
-#define BT_Max_Number_Of_Devices 10
-#define BT_Max_Device_Name_Length 30
-#define BT_Device_Address_Length 12
-
-#define BT_Command_Buffer_Length 500
-
-
-//BLUENRG-2 Private Variables and Data structures:
-extern uint8_t BT_User_Buffer_Length;
-
-
-extern uint8_t BT_Devices_Name[BT_Max_Number_Of_Devices][BT_Max_Device_Name_Length];
-extern uint8_t BT_Devices_Address[BT_Max_Number_Of_Devices][BT_Device_Address_Length];
-extern uint8_t BT_Devices_Index;
-extern uint8_t BT_Rx;
-extern uint8_t BT_User_Buffer[192];
-extern uint8_t BT_User_Buffer_Index;
-extern uint8_t BT_Commands_Buffer[BT_Command_Buffer_Length];
-extern uint8_t BT_Commands_Buffer_Index;
-extern uint8_t BT_BOS_Index;
-
-extern uint8_t* BT_User_Buffer_ptr;
-extern uint8_t* BT_User_Buffer_beginning_ptr;
-extern uint8_t* BT_User_Buffer_Index_ptr;
-
-
-extern uint8_t BT_To_User_Buffer_flag;
-//1: Bluetooth To User_Buffer
-//0: Bluetooth To BOS Messaging Buffer
-
-extern uint8_t BT_Connection_flag;
-//1: Connected
-//0: Disconnected
-
-
-extern uint8_t BT_delete_connecting_char_flag;
-extern uint8_t BT_delete_disconnecting_char_flag;
-
-extern uint8_t BT_boot; //flag for sending name to BlueNRG Module on startup
-
-
-extern uint8_t BT_Mac_Address_Buffer[6];
-extern uint8_t BT_Mac_Address_Buffer_Index;
-extern uint8_t BT_Receive_Mac_Address_Flag;
 
 
 
 
 /*-------------------------------------------------------------------------------------*/
 
-
-/* BlueNRG Private Function Prototypes-------------------------------------------*/
-extern void BT_Get_Mac_Address();
-extern Module_Status BT_Connect(uint8_t * Mac_Address, uint8_t len);
 
 
 
@@ -205,14 +164,8 @@ extern void SystemClock_Config(void);
 	|																APIs	 																 	|
    -----------------------------------------------------------------------
 */
-extern void BT_Receive_Data_To_BOS(void);
-extern Module_Status BT_Receive_Data(uint8_t* buffer,uint8_t size);
-extern Module_Status BT_Send_Message(uint8_t dst,uint16_t code,uint16_t numberOfParams);
-extern Module_Status BT_Send_Data(uint8_t* BT_Data, uint8_t length);
-extern Module_Status BT_Clear_User_Buffer(void);
-extern void BT_RESET_MODULE(void);
-extern void BT_Disconnect(void);
-extern Module_Status BT_Stream_To_Port(uint8_t port_number);
+
+extern Module_Status BT_Send_Data(uint8_t* BT_Data,uint8_t length);
 void SetupPortForRemoteBootloaderUpdate(uint8_t port);
 void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);
 
@@ -225,12 +178,8 @@ void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outpo
 	|															Commands																 	|
    -----------------------------------------------------------------------
 */
-extern const CLI_Command_Definition_t btClearUserBufferCommandDefinition;
-extern const CLI_Command_Definition_t btSendDataCommandDefinition;
-extern const CLI_Command_Definition_t btDisconnectCommandDefinition;
-extern const CLI_Command_Definition_t btStreamToPortCommandDefinition;
-extern const CLI_Command_Definition_t btGetMacAddressDefinition;
-extern const CLI_Command_Definition_t btConnectDefinition;
+extern const CLI_Command_Definition_t CLI_BT_Send_DataCommandDefinition;
+
 
 
 
