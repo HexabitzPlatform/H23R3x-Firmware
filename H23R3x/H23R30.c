@@ -29,6 +29,11 @@ extern FLASH_ProcessTypeDef pFlash;
 extern uint8_t numOfRecordedSnippets;
 
 
+uint8_t UserBufferData[USER_RX_BUF_SIZE]={0};
+uint8_t UserData=0;
+uint8_t indexInputUserDataBuffer = 0;
+uint8_t indexProcessUserDataBuffer = 0;
+volatile uint32_t* DMACountUserDataBuffer = NULL;
 
 /*-------------------------------------------------------------------------------------*/
 
@@ -401,6 +406,56 @@ Module_Status BT_Send_Data(uint8_t* BT_Data,uint8_t length){
 }
 
 
+
+/*-------------------------------------------------------------------------------------*/
+uint8_t GetUserDataCount(void)
+{
+	indexInputUserDataBuffer = USER_RX_BUF_SIZE - (uint8_t)(*DMACountUserDataBuffer);
+
+	if(indexInputUserDataBuffer== indexProcessUserDataBuffer)
+	{
+		return 0;
+	}
+
+	else
+	{
+		if(indexInputUserDataBuffer > indexProcessUserDataBuffer)
+		{
+			return (indexInputUserDataBuffer - indexProcessUserDataBuffer);
+		}
+		else
+		{
+			return (indexInputUserDataBuffer - indexProcessUserDataBuffer + USER_RX_BUF_SIZE);
+		}
+	}
+}
+
+/*-------------------------------------------------------------------------------------*/
+Module_Status GetUserDataByte(uint8_t* pData)
+{
+
+	if(GetUserDataCount() != 0)
+	{
+		if(pData == NULL)
+		{
+			return H23R3_ERROR;
+		}
+
+		*pData =  UserBufferData[indexProcessUserDataBuffer];
+		indexProcessUserDataBuffer++;
+		if(indexProcessUserDataBuffer == USER_RX_BUF_SIZE)
+		{
+			indexProcessUserDataBuffer = 0;
+		}
+		return H23R3_OK;
+	}
+
+	else
+	{
+		return H23R3_ERROR;
+	}
+
+}
 
 /* -----------------------------------------------------------------------
 	|					Commands										  |

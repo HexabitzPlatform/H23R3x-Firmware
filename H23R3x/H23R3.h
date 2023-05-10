@@ -103,7 +103,7 @@
 
 
 /*..........Enable User Data from external ports (like USB, Ethernet, BLE ...)......*/
-#define __USER_DATA_BUFFER
+//#define __USER_DATA_BUFFER
 
 #define NUM_MODULE_PARAMS		1
 
@@ -140,7 +140,7 @@ typedef enum
 #define _IND_LED_PIN										GPIO_PIN_11
 
 #define PORT_BTC_CONN 										P6
-
+#define USER_RX_BUF_SIZE  256
 /* Export UART variables */
 extern UART_HandleTypeDef huart1;
 extern UART_HandleTypeDef huart2;
@@ -166,6 +166,8 @@ extern void SystemClock_Config(void);
 */
 
 extern Module_Status BT_Send_Data(uint8_t* BT_Data,uint8_t length);
+extern uint8_t GetUserDataCount(void);
+extern Module_Status GetUserDataByte(uint8_t* pData);
 void SetupPortForRemoteBootloaderUpdate(uint8_t port);
 void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);
 
